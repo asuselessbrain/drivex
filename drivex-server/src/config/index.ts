@@ -7,4 +7,6 @@ dotenv.config({path: path.join(process.cwd(), '.env')});
 export const config = {
     connectionString: process.env.CONNECTION_STRING,
     saltRounds: Number(process.env.SALT_ROUNDS),
+    jwtSecret: process.env.JWT_SECRET as string,
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN as string
 }
