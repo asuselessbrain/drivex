@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 import { config } from './config';
 import { authRoutes } from './app/modules/auth/auth.routes';
 import pool from './db/db';
+import { vehicleRoutes } from './app/modules/vehicle/vehicle.routes';
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1/vehicles', vehicleRoutes);
 
 
 const initDb = async () => {
