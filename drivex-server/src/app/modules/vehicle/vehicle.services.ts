@@ -21,7 +21,6 @@ const getSingleVehicleFromDB = async (vehicleId: number) => {
 }
 
 const updateVehicleInDB = async (vehicleId: number, updateData: any) => {
-    console.log(updateData)
     const { vehicle_name, type, registration_number, daily_rent_price, availability_status } = updateData;
 
     const result = await pool.query(`
@@ -42,9 +41,29 @@ const updateVehicleInDB = async (vehicleId: number, updateData: any) => {
     return result.rows[0];
 }
 
+const deleteVehicleFromDB = async (vehicleId: number) => {
+    const bookingCheck = await pool.query(
+        `SELECT * FROM bookings WHERE vehicle_id = $1 AND status = 'active'`,
+        [vehicleId]
+    );
+
+    if (bookingCheck.rows.length > 0) {
+        throw new Error("Cannot delete vehicle: there are active bookings");
+    }
+
+    const result = await pool.query(
+        `DELETE FROM vehicles WHERE id = $1 RETURNING *`,
+        [vehicleId]
+    );
+
+    return result.rows[0];
+};
+
+
 export const vehicleService = {
     createVehicleIntoDB,
     getAllVehiclesFromDB,
     getSingleVehicleFromDB,
-    updateVehicleInDB
+    updateVehicleInDB,
+    deleteVehicleFromDB
 }
