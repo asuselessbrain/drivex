@@ -1,15 +1,15 @@
 import express from 'express';
 import { Pool } from 'pg';
 import { config } from './config';
+import { authRoutes } from './app/modules/auth/auth.routes';
+import pool from './db/db';
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const pool = new Pool({
-    connectionString: `${config.connectionString as string}`
-})
+app.use('/api/v1/auth', authRoutes)
 
 
 const initDb = async () => {
@@ -64,7 +64,7 @@ const initDb = async () => {
         Constraint chk_status CHECK (status IN ('active', 'cancelled', 'returned')),
         Constraint chk_total_price_positive CHECK (total_price > 0),
         Constraint chk_rent_dates CHECK (rent_end_date > rent_start_date)
-        
+
         )`)
 }
 
