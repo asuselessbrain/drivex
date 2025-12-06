@@ -60,8 +60,27 @@ const getSingleVehicle = async (req: Request, res: Response) => {
     }
 }
 
+const updateVehicle = async (req: Request, res: Response) => {
+    const {vehicleId} = req.params;
+    try{
+        const result = await vehicleService.updateVehicleInDB(Number(vehicleId), req.body);
+        res.status(200).json({
+            success: true,
+            message: 'Vehicle updated successfully',
+            data: result
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update vehicle',
+            error: error.message
+        });
+    }
+}
+
 export const vehicleController = {
     createVehicle,
     getAllVehicles,
-    getSingleVehicle
+    getSingleVehicle,
+    updateVehicle
 }
