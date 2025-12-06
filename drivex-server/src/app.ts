@@ -1,5 +1,6 @@
 import express from 'express';
 import { Pool } from 'pg';
+import { config } from './config';
 
 const app = express();
 
@@ -7,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const pool = new Pool({
-    connectionString: `postgresql://neondb_owner:npg_GVFMBx4PAwb2@ep-cold-cell-a470c795-pooler.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require`
+    connectionString: `${config.connectionString as string}`
 })
 
 
@@ -63,6 +64,7 @@ const initDb = async () => {
         Constraint chk_status CHECK (status IN ('active', 'cancelled', 'returned')),
         Constraint chk_total_price_positive CHECK (total_price > 0),
         Constraint chk_rent_dates CHECK (rent_end_date > rent_start_date)
+        
         )`)
 }
 
