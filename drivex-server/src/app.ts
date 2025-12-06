@@ -4,6 +4,7 @@ import { config } from './config';
 import { authRoutes } from './app/modules/auth/auth.routes';
 import pool from './db/db';
 import { vehicleRoutes } from './app/modules/vehicle/vehicle.routes';
+import { userRoutes } from './app/modules/user/user.routes';
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/vehicles', vehicleRoutes);
+app.use('/api/v1/users', userRoutes);
 
 
 const initDb = async () => {
