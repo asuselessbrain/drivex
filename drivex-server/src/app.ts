@@ -1,6 +1,4 @@
 import express from 'express';
-import { Pool } from 'pg';
-import { config } from './config';
 import { authRoutes } from './app/modules/auth/auth.routes';
 import pool from './db/db';
 import { vehicleRoutes } from './app/modules/vehicle/vehicle.routes';
@@ -76,4 +74,8 @@ const initDb = async () => {
 }
 
 initDb()
+
+app.get('/', (req, res) => {
+    res.send('Welcome to DriveX Rental Service API');
+});
 export default app;
