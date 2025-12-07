@@ -85,8 +85,47 @@ const getMyBookingsForCustomer = async (req: Request, res: Response) => {
     }
 }
 
+const returnBookingStatus = async (req: Request, res: Response) => {
+    const { bookingId } = req.params;
+    try {
+        const result = await bookingService.returnBookingStatus(Number(bookingId));
+        res.status(200).json({
+            success: true,
+            message: 'Booking status updated successfully',
+            data: result
+        });
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update booking status',
+            error: error.message
+        });
+    }
+}
+
+const cancelBooking = async (req: Request, res: Response) => {
+    const { bookingId } = req.params;
+    try {
+        const result = await bookingService.cancelBooking(Number(bookingId));
+        res.status(200).json({
+            success: true,
+            message: 'Booking cancelled successfully',
+            data: result
+        });
+    }
+    catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: 'Failed to cancel booking',
+            error: error.message
+        });
+    }
+}
+
 export const bookingController = {
     createBooking,
     getAllBookingsForAdmin,
-    getMyBookingsForCustomer
+    getMyBookingsForCustomer,
+    returnBookingStatus,
+    cancelBooking
 }

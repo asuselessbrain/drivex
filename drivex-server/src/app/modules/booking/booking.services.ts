@@ -67,11 +67,70 @@ const getMyBookingsForCustomer = async (customerId: number) => {
     WHERE b.user_id = $1;
   `, [customerId]);
 
-  return result.rows;
+    return result.rows;
+}
+
+const returnBookingStatus = async (bookingId: number) => {
+
+    const vehicleUpdate = await pool.query(`
+        UPDATE vehicles 
+        SET availability_status = 'available',
+        updated_at = Now() 
+        WHERE id = (SELECT vehicle_id FROM bookings WHERE id = $1)
+        RETURNING availability_status
+    `, [bookingId]);
+
+    const bookingUpdate = await pool.query(`
+        UPDATE bookings 
+        SET 
+            status = 'returned', 
+            updated_at = Now() 
+        WHERE id = $1 
+        RETURNING *
+    `, [bookingId]);
+    const booking = bookingUpdate.rows[0];
+    const vehicle = vehicleUpdate.rows[0];
+
+    return {
+        id: booking.id,
+        customer_id: booking.customer_id,
+        vehicle_id: booking.vehicle_id,
+        rent_start_date: booking.rent_start_date,
+        rent_end_date: booking.rent_end_date,
+        total_price: booking.total_price,
+        status: booking.status,
+        vehicle: {
+            availability_status: vehicle.availability_status
+        }
+    }
+
+}
+
+const cancelBooking = async (bookingId: number) => {
+
+    await pool.query(`
+        UPDATE vehicles
+        SET
+            availability_status = 'available',
+            updated_at = Now()
+        WHERE id = (SELECT vehicle_id FROM bookings WHERE id = $1)
+        RETURNING availability_status
+    `, [bookingId]);
+    const bookingUpdate = await pool.query(`
+        UPDATE bookings
+        SET 
+            status = 'cancelled',
+            updated_at = Now()
+        WHERE id = $1
+        RETURNING *
+    `, [bookingId]);
+    return bookingUpdate.rows[0];
 }
 
 export const bookingService = {
     createBooking,
     getAllBookingsForAdmin,
-    getMyBookingsForCustomer
+    getMyBookingsForCustomer,
+    returnBookingStatus,
+    cancelBooking
 }
