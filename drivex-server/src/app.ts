@@ -5,6 +5,7 @@ import { authRoutes } from './app/modules/auth/auth.routes';
 import pool from './db/db';
 import { vehicleRoutes } from './app/modules/vehicle/vehicle.routes';
 import { userRoutes } from './app/modules/user/user.routes';
+import { bookingRoutes } from './app/modules/booking/booking.routes';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/vehicles', vehicleRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/bookings', bookingRoutes);
 
 
 const initDb = async () => {
@@ -67,6 +69,7 @@ const initDb = async () => {
 
         Constraint chk_status CHECK (status IN ('active', 'cancelled', 'returned')),
         Constraint chk_total_price_positive CHECK (total_price > 0),
+        Constraint chk_start_date CHECK(rent_start_date >= CURRENT_DATE),
         Constraint chk_rent_dates CHECK (rent_end_date > rent_start_date)
 
         )`)
