@@ -29,7 +29,7 @@ const createBooking = async (payload: any) => {
 }
 
 const getAllBookingsForAdmin = async () => {
-  const result = await pool.query(`
+    const result = await pool.query(`
     SELECT 
       b.id,
       b.user_id,
@@ -47,10 +47,31 @@ const getAllBookingsForAdmin = async () => {
     LEFT JOIN vehicles v ON b.vehicle_id = v.id;
   `);
 
+    return result.rows;
+}
+
+const getMyBookingsForCustomer = async (customerId: number) => {
+    const result = await pool.query(`
+    SELECT
+        b.id,
+        b.vehicle_id,
+        b.rent_start_date,
+        b.rent_end_date,
+        b.total_price,
+        b.status,
+        v.vehicle_name,
+        v.registration_number,
+        v.type
+    FROM bookings b
+    LEFT JOIN vehicles v ON b.vehicle_id = v.id
+    WHERE b.user_id = $1;
+  `, [customerId]);
+
   return result.rows;
 }
 
 export const bookingService = {
     createBooking,
-    getAllBookingsForAdmin
+    getAllBookingsForAdmin,
+    getMyBookingsForCustomer
 }
